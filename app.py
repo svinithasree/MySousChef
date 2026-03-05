@@ -1,4 +1,6 @@
 import streamlit as st
+from dotenv import load_dotenv
+load_dotenv()
 import os
 import json
 import pandas as pd
@@ -36,9 +38,9 @@ with st.sidebar:
     st.image("https://img.icons8.com/color/96/chef-hat.png", width=80)
     st.markdown("### ⚙️ Settings")
 
-    api_key = st.text_input("Google AI API Key", type="password", help="Get yours at aistudio.google.com")
+    api_key = os.environ.get("GOOGLE_API_KEY", "")
     if not api_key:
-        api_key = os.environ.get("GOOGLE_API_KEY", "")
+        st.error("⚠️ GOOGLE_API_KEY not found in .env file. Please add it and restart the app.")
 
     st.divider()
     st.markdown("### 📂 Recipe Book")

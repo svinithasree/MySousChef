@@ -2,22 +2,18 @@ import streamlit as st
 import tempfile
 import os
 
+
 def record_ingredients():
-    """Voice input component using streamlit audio recorder."""
+    """Voice input using Streamlit's built-in audio input (v1.37+)."""
     st.markdown("### 🎙️ Tell us what ingredients you have at home")
     st.caption("Click the mic, speak your ingredients naturally, then click stop.")
 
-    try:
-        from streamlit_audiorecorder import audiorecorder
-        audio = audiorecorder("🎙️ Click to Record", "⏹️ Stop Recording")
+    audio = st.audio_input("Record your ingredients")
 
-        if len(audio) > 0:
-            st.audio(audio.export().read(), format="audio/wav")
-            with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
-                audio.export(f.name, format="wav")
-                return f.name
-    except ImportError:
-        st.warning("audiorecorder not installed. Using text input instead.")
+    if audio is not None:
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
+            f.write(audio.getvalue())
+            return f.name
 
     return None
 
@@ -25,6 +21,7 @@ def record_ingredients():
 def transcribe_audio(audio_path: str, api_key: str) -> str:
     """Transcribe audio using Google Gemini."""
     import google.generativeai as genai
+    import base64
 
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel("gemini-2.5-flash")
@@ -32,7 +29,6 @@ def transcribe_audio(audio_path: str, api_key: str) -> str:
     with open(audio_path, "rb") as f:
         audio_data = f.read()
 
-    import base64
     audio_b64 = base64.b64encode(audio_data).decode()
 
     response = model.generate_content([
