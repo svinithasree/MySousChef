@@ -1,0 +1,29 @@
+# Environment variables - NEVER commit this
+.env
+
+# Virtual environment
+mysouschef-mvp-env/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# VS Code settings
+.vscode/
+
+# Mac system files
+.DS_Store
+
+# Streamlit secrets - NEVER commit this
+.streamlit/secrets.toml
+
+# Uploaded/generated data files
+data/uploaded_recipes.xlsx
+data/weekly_meal_plan.xlsx
+
+# Jupyter/Colab notebooks (optional)
+*.ipynb_checkpoints
