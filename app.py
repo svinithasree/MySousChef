@@ -62,7 +62,7 @@ with st.sidebar:
 
 # ── Main flow ─────────────────────────────────────────────────────────────────
 if not api_key:
-    st.warning("⚠️ Please enter your Google AI API Key in the sidebar to get started.")
+    st.warning("⚠️ GOOGLE_API_KEY not found. Please add it to your .env file and restart the app.")
     st.stop()
 
 # Load recipes

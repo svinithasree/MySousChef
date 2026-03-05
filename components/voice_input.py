@@ -1,74 +1,15 @@
 import streamlit as st
-import tempfile
-import os
-
-
-def record_ingredients():
-    """Voice input using Streamlit's built-in audio input (v1.37+)."""
-    st.markdown("### 🎙️ Tell us what ingredients you have at home")
-    st.caption("Click the mic, speak your ingredients naturally, then click stop.")
-
-    audio = st.audio_input("Record your ingredients")
-
-    if audio is not None:
-        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
-            f.write(audio.getvalue())
-            return f.name
-
-    return None
-
-
-def transcribe_audio(audio_path: str, api_key: str) -> str:
-    """Transcribe audio using Google Gemini."""
-    import google.generativeai as genai
-    import base64
-
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel("gemini-2.5-flash")
-
-    with open(audio_path, "rb") as f:
-        audio_data = f.read()
-
-    audio_b64 = base64.b64encode(audio_data).decode()
-
-    response = model.generate_content([
-        {
-            "inline_data": {
-                "mime_type": "audio/wav",
-                "data": audio_b64
-            }
-        },
-        "Please transcribe exactly what ingredients are mentioned in this audio. Return only the list of ingredients as plain text, comma separated."
-    ])
-
-    os.unlink(audio_path)
-    return response.text.strip()
 
 
 def ingredient_input_section(api_key: str) -> str:
-    """Full ingredient input section with voice + text fallback."""
-    input_method = st.radio(
-        "How would you like to enter ingredients?",
-        ["🎙️ Voice Input", "⌨️ Type them in"],
-        horizontal=True
+    """Ingredient input section — text only."""
+    st.markdown("### 🥦 What ingredients do you have at home?")
+    st.caption("List everything you have — AI will sort them into categories automatically.")
+
+    raw_ingredients = st.text_area(
+        "Type your ingredients naturally:",
+        placeholder="e.g. spinach, onions, tomatoes, rice, lentils, paneer, apples, yogurt, cumin...",
+        height=150
     )
-
-    raw_ingredients = ""
-
-    if input_method == "🎙️ Voice Input":
-        audio_path = record_ingredients()
-        if audio_path:
-            with st.spinner("Transcribing your ingredients..."):
-                raw_ingredients = transcribe_audio(audio_path, api_key)
-            st.success("✅ Transcribed!")
-            raw_ingredients = st.text_area(
-                "Edit if needed:", value=raw_ingredients, height=100
-            )
-    else:
-        raw_ingredients = st.text_area(
-            "Type your ingredients (comma separated or just list them naturally):",
-            placeholder="e.g. spinach, onions, tomatoes, rice, lentils, paneer, apples...",
-            height=120
-        )
 
     return raw_ingredients
