@@ -77,11 +77,11 @@ except Exception as e:
 st.markdown('<div class="section-header">Step 1 — What\'s in your kitchen? 🥦</div>', unsafe_allow_html=True)
 st.caption("Every Saturday, tell us what ingredients you have and we'll plan your week.")
 
-raw_ingredients = ingredient_input_section(api_key)
+raw_ingredients, submitted = ingredient_input_section(api_key)
 
 # ── Step 2: Categorize Ingredients ───────────────────────────────────────────
 categorized = {}
-if raw_ingredients and st.button("✅ Categorize Ingredients"):
+if raw_ingredients and submitted:
     with st.spinner("Sorting your ingredients..."):
         categorized = categorize_ingredients(raw_ingredients, api_key)
     st.session_state["categorized"] = categorized
