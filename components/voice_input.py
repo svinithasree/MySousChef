@@ -8,7 +8,7 @@ def record_ingredients():
     st.caption("Click the mic, speak your ingredients naturally, then click stop.")
 
     try:
-        from audiorecorder import audiorecorder
+        from streamlit_audiorecorder import audiorecorder
         audio = audiorecorder("🎙️ Click to Record", "⏹️ Stop Recording")
 
         if len(audio) > 0:
